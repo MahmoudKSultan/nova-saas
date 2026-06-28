@@ -28,11 +28,12 @@ const faqs = [
 ]
 
 export function FaqSection() {
-  const [openIndex, setOpenIndex] = useState<number | null>(0)
+  const [openIndex, setOpenIndex] = useState<number | null>(null)
 
   return (
-    <section id="faq" className="py-24 relative overflow-hidden">
-      <div className="container mx-auto px-6 relative z-10 max-w-4xl">
+    <section id="faq" className="py-24 relative">
+      {/* The key fix: the section and all containers use block layout, never flex/grid on the items themselves */}
+      <div className="container mx-auto px-6 max-w-3xl">
         <div className="text-center mb-16">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -53,48 +54,53 @@ export function FaqSection() {
           </motion.p>
         </div>
 
-        <div className="w-full max-w-3xl mx-auto flex flex-col gap-4">
+        {/* 
+          Key fix: items are display:block (not flex children), so their width
+          is always 100% of the parent. No flex/grid children here.
+        */}
+        <div className="space-y-3 max-w-[600px] mx-auto">
           {faqs.map((faq, index) => {
             const isOpen = openIndex === index
-            
             return (
-              <motion.div
+              <div
                 key={index}
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="w-full border border-white/10 rounded-2xl bg-card overflow-hidden"
+                style={{ display: "block" }}
+                className="rounded-2xl border border-white/10 bg-white/5 overflow-hidden"
               >
+                {/* Button is block-level, always fills the width */}
                 <button
                   onClick={() => setOpenIndex(isOpen ? null : index)}
-                  className="w-full px-6 py-6 flex items-center justify-between text-left focus:outline-none interactive"
+                  style={{ display: "flex", width: "100%" }}
+                  className="items-center justify-between px-6 py-5 text-left focus:outline-none interactive"
                 >
-                  <span className="text-lg font-medium pr-8">{faq.question}</span>
-                  <motion.div
+                  <span className="text-base font-medium">{faq.question}</span>
+                  <motion.span
                     animate={{ rotate: isOpen ? 45 : 0 }}
-                    transition={{ type: "spring", stiffness: 200, damping: 20 }}
-                    className="flex-shrink-0 w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-primary"
+                    transition={{ duration: 0.25, ease: "easeInOut" }}
+                    style={{ flexShrink: 0, display: "flex", marginLeft: "1rem" }}
+                    className="w-7 h-7 rounded-full bg-white/10 items-center justify-center text-primary"
                   >
-                    <Plus className="w-5 h-5" />
-                  </motion.div>
+                    <Plus className="w-4 h-4" />
+                  </motion.span>
                 </button>
-                
+
                 <AnimatePresence initial={false}>
                   {isOpen && (
                     <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ type: "spring", stiffness: 200, damping: 25 }}
+                      key="answer"
+                      initial={{ height: 0 }}
+                      animate={{ height: "auto" }}
+                      exit={{ height: 0 }}
+                      transition={{ duration: 0.28, ease: "easeInOut" }}
+                      style={{ overflow: "hidden" }}
                     >
-                      <div className="px-6 pb-6 pt-0 text-muted-foreground leading-relaxed">
+                      <div className="px-6 pb-5 text-muted-foreground leading-relaxed text-sm">
                         {faq.answer}
                       </div>
                     </motion.div>
                   )}
                 </AnimatePresence>
-              </motion.div>
+              </div>
             )
           })}
         </div>

@@ -55,7 +55,29 @@ const testimonials = [
 ]
 
 export function TestimonialsSection() {
-  const containerRef = useRef<HTMLDivElement>(null)
+  const carouselRef = useRef<HTMLDivElement>(null)
+  const innerRef = useRef<HTMLDivElement>(null)
+  const [dragConstraint, setDragConstraint] = useState(0)
+
+  useEffect(() => {
+    const updateConstraint = () => {
+      if (carouselRef.current && innerRef.current) {
+        // The constraint is the difference between the outer container's width 
+        // and the inner draggable container's full width.
+        const constraint = carouselRef.current.offsetWidth - innerRef.current.scrollWidth
+        // If constraint is positive, it means the content fits and doesn't need dragging.
+        setDragConstraint(constraint > 0 ? 0 : constraint)
+      }
+    }
+    
+    updateConstraint()
+    // Small timeouts to wait for fonts and images
+    setTimeout(updateConstraint, 100)
+    setTimeout(updateConstraint, 500)
+    
+    window.addEventListener("resize", updateConstraint)
+    return () => window.removeEventListener("resize", updateConstraint)
+  }, [])
 
   return (
     <section id="testimonials" className="py-24 relative overflow-hidden bg-black/50">
@@ -81,14 +103,20 @@ export function TestimonialsSection() {
         </div>
       </div>
 
-      <div className="w-full overflow-x-auto hide-scrollbar snap-x snap-mandatory pb-8" ref={containerRef}>
-        <div
-          className="flex gap-6 px-6 md:px-[20vw] w-max"
+      <div className="w-full overflow-hidden" ref={carouselRef}>
+        <motion.div
+          ref={innerRef}
+          drag="x"
+          dragConstraints={{ right: 0, left: dragConstraint }}
+          dragMomentum={false}
+          dragElastic={0}
+          whileTap={{ cursor: "grabbing" }}
+          className="flex gap-6 px-6 md:px-[10vw] cursor-grab interactive w-max"
         >
           {testimonials.map((testimonial, index) => (
-            <div
+            <motion.div
               key={index}
-              className="min-w-[300px] md:min-w-[400px] p-8 rounded-3xl bg-card border border-white/10 flex flex-col justify-between select-none snap-center"
+              className="w-[280px] shrink-0 p-6 rounded-3xl bg-card border border-white/10 flex flex-col justify-between select-none"
             >
               <div className="mb-8">
                 {/* Custom Quote Icon */}
@@ -107,9 +135,9 @@ export function TestimonialsSection() {
                   <p className="text-sm text-muted-foreground">{testimonial.role}</p>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
       
       <div className="text-center mt-8 text-sm text-muted-foreground">

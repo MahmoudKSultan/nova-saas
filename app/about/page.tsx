@@ -13,6 +13,22 @@ const timelineEvents = [
   { year: "2024", title: "Global Scale", description: "Deployed our 300th edge node, bringing single-digit latency to 95% of the globe." },
 ]
 
+const values = [
+  { title: "Developer First", desc: "We prioritize the developer experience above all else. If it's not intuitive, we don't ship it." },
+  { title: "Relentless Performance", desc: "Every millisecond counts. We optimize at the lowest levels so you don't have to." },
+  { title: "Transparent Scale", desc: "No hidden limits or surprise bills. Scale to infinity effortlessly and transparently." },
+  { title: "Security by Design", desc: "Enterprise-grade security embedded into the platform from day zero." }
+]
+
+const team = [
+  { name: "Alice Chen", role: "Chief Executive Officer", initials: "AC" },
+  { name: "Marcus Reed", role: "Chief Technology Officer", initials: "MR" },
+  { name: "Sarah Jenkins", role: "Head of Product", initials: "SJ" },
+  { name: "David Kim", role: "Lead Designer", initials: "DK" },
+  { name: "Elena Rossi", role: "VP of Engineering", initials: "ER" },
+  { name: "James Wilson", role: "Head of Growth", initials: "JW" }
+]
+
 export default function AboutPage() {
   const targetRef = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({
@@ -73,8 +89,79 @@ export default function AboutPage() {
         </div>
       </section>
       
+      {/* Values Section */}
+      <section className="py-32 relative z-10 bg-black/50">
+        <div className="container mx-auto px-6">
+          <div className="mb-20 text-center">
+            <motion.h2 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="text-4xl md:text-6xl font-bold tracking-tight mb-6"
+            >
+              Our Core Values
+            </motion.h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+              The principles that guide every feature we build and every decision we make.
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {values.map((value, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.1 }}
+                className="p-8 rounded-3xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
+              >
+                <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center mb-6">
+                  <div className="w-4 h-4 rounded-full bg-primary animate-pulse" />
+                </div>
+                <h3 className="text-2xl font-bold mb-4">{value.title}</h3>
+                <p className="text-muted-foreground leading-relaxed">{value.desc}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Team Section */}
+      <section className="py-32 relative z-10">
+        <div className="container mx-auto px-6">
+          <motion.h2 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-4xl md:text-6xl font-bold tracking-tight mb-20 text-center"
+          >
+            Meet the Team
+          </motion.h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            {team.map((member, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.1 }}
+                className="group relative rounded-3xl overflow-hidden bg-white/5 border border-white/10 p-8 flex flex-col items-center text-center hover:-translate-y-2 transition-transform duration-300"
+              >
+                <div className="w-32 h-32 rounded-full bg-gradient-to-br from-primary/80 to-secondary/80 flex items-center justify-center text-4xl font-black text-white mb-6 group-hover:scale-110 transition-transform duration-500">
+                  {member.initials}
+                </div>
+                <h3 className="text-2xl font-bold mb-2">{member.name}</h3>
+                <p className="text-primary">{member.role}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Clip-path reveal section */}
-      <div className="container mx-auto px-6 mt-40">
+      <div className="container mx-auto px-6 mt-20">
         <motion.div 
           initial={{ clipPath: "circle(0% at 50% 50%)" }}
           whileInView={{ clipPath: "circle(150% at 50% 50%)" }}
